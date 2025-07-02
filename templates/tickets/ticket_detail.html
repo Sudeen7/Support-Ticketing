@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ ticket.title }} | Support System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Ticket #{{ ticket.id }}</h2>
+    <div>
+        <a href="{% url 'ticket_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+        {% if user.profile.role == 'admin' or user == ticket.created_by or user == ticket.assigned_to %}
+        <a href="{% url 'ticket_update' ticket.id %}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        {% endif %}
+        {% if user.profile.role == 'admin' %}
+        <a href="{% url 'ticket_delete' ticket.id %}" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Delete
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ ticket.title }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6 class="fw-bold">Description</h6>
+                    <p class="card-text">{{ ticket.description|linebreaks }}</p>
+                </div>
+                
+                {% if ticket.comments.all %}
+                <div class="mb-4">
+                    <h6 class="fw-bold">Comments</h6>
+                    <div class="list-group">
+                        {% for comment in ticket.comments.all %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ comment.author.username }}</h6>
+                                <small>{{ comment.created_at|date:"M d, Y H:i" }}</small>
+                            </div>
+                            <p class="mb-1">{{ comment.text|linebreaks }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div>
+                    <h6 class="fw-bold">Add Comment</h6>
+                    <form method="post" action="{% url 'add_comment' ticket.id%}">
+                        {% csrf_token %}
+                        <input type="hidden" name="ticket" value="{{ ticket.id }}">
+                        <div class="mb-3">
+                            <textarea name="text" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Comment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Ticket Details</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Status</span>
+                        <span class="badge bg-{{ ticket.status|lower }}">{{ ticket.get_status_display }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Priority</span>
+                        <span class="badge bg-{{ ticket.priority|lower }}">{{ ticket.get_priority_display }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Category</span>
+                        <span>{{ ticket.category.name }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Department</span>
+                        <span>{{ ticket.department.name }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Created By</span>
+                        <span>{{ ticket.created_by.username }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Assigned To</span>
+                        <span>{{ ticket.assigned_to.username|default:"Unassigned" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Created</span>
+                        <span>{{ ticket.created_at|date:"M d, Y H:i" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Updated</span>
+                        <span>{{ ticket.updated_at|date:"M d, Y H:i" }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        {% if user.profile.role == 'admin' and not ticket.assigned_to %}
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Assign Ticket</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'ticket_assign' ticket.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_assigned_to" class="form-label">Support Agent</label>
+                        <select name="assigned_to" id="id_assigned_to" class="form-select" required>
+                            <option value="">Select Support Agent</option>
+                            {% for support in support_users %}
+                            <option value="{{ support.id }}">{{ support.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Assign Ticket</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if user.profile.role == 'admin' or user == ticket.assigned_to %}
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Update Status</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'ticket_update_status' ticket.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_status" class="form-label">Status</label>
+                        <select name="status" id="id_status" class="form-select" required>
+                            <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Open</option>
+                            <option value="in_progress" {% if ticket.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="pending" {% if ticket.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                            <option value="closed" {% if ticket.status == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

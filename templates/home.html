@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Support System{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-5">
+    <div class="col-md-6">
+        <h1 class="display-4 fw-bold">Welcome to the Support System</h1>
+        <p class="lead">A comprehensive solution for managing support tickets and customer inquiries.</p>
+        {% if not user.is_authenticated %}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 me-md-2">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-lg px-4">Register</a>
+        </div>
+        {% else %}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <a href="{% url 'ticket_list' %}" class="btn btn-primary btn-lg px-4 me-md-2">View Tickets</a>
+            <a href="{% url 'ticket_create' %}" class="btn btn-outline-secondary btn-lg px-4">Create Ticket</a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6 text-center">
+        <i class="fas fa-headset fa-10x text-primary"></i>
+    </div>
+</div>
+
+<hr class="my-5">
+
+<div class="row g-4 py-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-ticket-alt fa-4x text-primary mb-3"></i>
+                <h3 class="card-title">Ticket Management</h3>
+                <p class="card-text">Create, track, and manage support tickets efficiently. Assign tickets to support agents and monitor their progress.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-comments fa-4x text-primary mb-3"></i>
+                <h3 class="card-title">Communication</h3>
+                <p class="card-text">Seamless communication between clients and support staff. Add comments to tickets and receive email notifications.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-4x text-primary mb-3"></i>
+                <h3 class="card-title">Analytics</h3>
+                <p class="card-text">Track performance metrics and gain insights into support operations. Monitor ticket resolution times and agent productivity.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated and user.profile.role == 'admin' %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">System Overview</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ total_tickets }}</h5>
+                                <p class="card-text">Total Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ total_users }}</h5>
+                                <p class="card-text">Total Users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ open_tickets }}</h5>
+                                <p class="card-text">Open Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ resolved_tickets }}</h5>
+                                <p class="card-text">Resolved Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

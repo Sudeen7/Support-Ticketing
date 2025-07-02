@@ -1,0 +1,181 @@
+/* Custom CSS for Support System */
+
+/* Status badge colors */
+.bg-open {
+    background-color: #17a2b8 !important; /* info */
+}
+
+.bg-in_progress {
+    background-color: #007bff !important; /* primary */
+}
+
+.bg-pending {
+    background-color: #ffc107 !important; /* warning */
+}
+
+.bg-resolved {
+    background-color: #28a745 !important; /* success */
+}
+
+.bg-closed {
+    background-color: #6c757d !important; /* secondary */
+}
+
+/* Priority badge colors */
+.bg-low {
+    background-color: #28a745 !important; /* success */
+}
+
+.bg-medium {
+    background-color: #17a2b8 !important; /* info */
+}
+
+.bg-high {
+    background-color: #ffc107 !important; /* warning */
+}
+
+.bg-urgent {
+    background-color: #dc3545 !important; /* danger */
+}
+
+/* Sticky footer */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Card hover effect */
+.card-hover:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Custom form styling */
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Navbar customization */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Ticket list table */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Comment section */
+.list-group-item-action:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Dashboard cards */
+.card .card-body {
+    padding: 1.5rem;
+}
+
+/* Profile page */
+.profile-header {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0.25rem;
+}
+
+/* Login/Register forms */
+.auth-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Notification styles */
+.notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: white;
+    font-size: 0.75rem;
+}
+
+.notification-icon {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+    background-color: #e8f4ff;
+}
+
+.notification-item .mark-notification-read {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(40, 167, 69, 0.2);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    text-align: center;
+    line-height: 28px;
+}
+
+.notification-item:hover .mark-notification-read {
+    display: block;
+}
+
+.notification-dropdown {
+    padding: 0;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.notification-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.notification-message {
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.notification-time {
+    font-size: 0.8rem;
+    color: #adb5bd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+}

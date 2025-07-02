@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.id %}Edit Ticket{% else %}New Ticket{% endif %} | Support System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% if form.instance.id %}Edit Ticket{% else %}New Ticket{% endif %}</h2>
+    <a href="{% if form.instance.id %}{% url 'ticket_detail' form.instance.id %}{% else %}{% url 'ticket_list' %}{% endif %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{% if form.instance.id %}Edit Ticket{% else %}New Ticket{% endif %}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Title</label>
+                        <input type="text" name="title" id="id_title" class="form-control" value="{{ form.title.value|default:'' }}" required>
+                        {% if form.title.errors %}
+                            <div class="text-danger">
+                                {% for error in form.title.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Description</label>
+                        <textarea name="description" id="id_description" class="form-control" rows="5" required>{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="text-danger">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                                {{ form.category }}
+                                {% for error in form.category.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+
+                            
+                            {% if form.category.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.category.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
+                                {{ form.department }}
+                                {% for error in form.department.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            {% if form.department.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.department.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_priority" class="form-label">Priority</label>
+                            <select name="priority" id="id_priority" class="form-select" required>
+                                <option value="low" {% if form.priority.value == 'low' %}selected{% endif %}>Low</option>
+                                <option value="medium" {% if form.priority.value == 'medium' or not form.priority.value %}selected{% endif %}>Medium</option>
+                                <option value="high" {% if form.priority.value == 'high' %}selected{% endif %}>High</option>
+                                <option value="urgent" {% if form.priority.value == 'urgent' %}selected{% endif %}>Urgent</option>
+                            </select>
+                            {% if form.priority.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.priority.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if user.profile.role == 'admin' or user.profile.role == 'support' %}
+                        <div class="col-md-6 mb-3">
+                            <label for="id_status" class="form-label">Status</label>
+                            <select name="status" id="id_status" class="form-select" required>
+                                <option value="open" {% if form.status.value == 'open' or not form.status.value %}selected{% endif %}>Open</option>
+                                <option value="in_progress" {% if form.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                <option value="pending" {% if form.status.value == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="resolved" {% if form.status.value == 'resolved' %}selected{% endif %}>Resolved</option>
+                                <option value="closed" {% if form.status.value == 'closed' %}selected{% endif %}>Closed</option>
+                            </select>
+                            {% if form.status.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.status.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if user.profile.role == 'admin' %}
+                    <div class="mb-3">
+                        <label for="id_assigned_to" class="form-label">Assigned To</label>
+                        <select name="assigned_to" id="id_assigned_to" class="form-select">
+                            <option value="">Unassigned</option>
+                            {% for support in support_users %}
+                            <option value="{{ support.id }}" {% if form.assigned_to.value|stringformat:"i" == support.id|stringformat:"i" %}selected{% endif %}>{{ support.username }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.assigned_to.errors %}
+                            <div class="text-danger">
+                                {% for error in form.assigned_to.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">{% if form.instance.id %}Update{% else %}Create{% endif %} Ticket</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

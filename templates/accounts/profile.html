@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile | Support System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Profile Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-circle fa-5x text-primary"></i>
+                </div>
+                <h5 class="card-title">{{ user.username }}</h5>
+                <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+                <p class="card-text"><strong>Role:</strong> {{ user.profile.get_role_display }}</p>
+                <p class="card-text"><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Activity Summary</h4>
+            </div>
+            <div class="card-body">
+                {% if user.profile.role == 'client' %}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ tickets_count }}</h5>
+                                <p class="card-text">Total Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ open_tickets_count }}</h5>
+                                <p class="card-text">Open Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ closed_tickets_count }}</h5>
+                                <p class="card-text">Closed Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% elif user.profile.role == 'support' %}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ assigned_tickets_count }}</h5>
+                                <p class="card-text">Assigned Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ pending_tickets_count }}</h5>
+                                <p class="card-text">Pending Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ resolved_tickets_count }}</h5>
+                                <p class="card-text">Resolved Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% elif user.profile.role == 'admin' %}
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ total_tickets_count }}</h5>
+                                <p class="card-text">Total Tickets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ users_count }}</h5>
+                                <p class="card-text">Total Users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ unassigned_tickets_count }}</h5>
+                                <p class="card-text">Unassigned</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ closed_tickets_count }}</h5>
+                                <p class="card-text">Closed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <h5 class="mt-4">Recent Activity</h5>
+                <div class="list-group">
+                    {% for ticket in recent_tickets %}
+                    <a href="{% url 'ticket_detail' ticket.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ ticket.title }}</h5>
+                            <small>{{ ticket.updated_at|timesince }} ago</small>
+                        </div>
+                        <p class="mb-1">{{ ticket.description|truncatechars:100 }}</p>
+                        <small>Status: <span class="badge bg-{{ ticket.status|lower }}">{{ ticket.get_status_display }}</span></small>
+                    </a>
+                    {% empty %}
+                    <div class="list-group-item">
+                        <p class="mb-0">No recent activity.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
